@@ -16,10 +16,7 @@ Python's `logging` module provides a flexible event logging system for applicati
 - Check out the [official Python logging documentation](https://docs.python.org/3/library/logging.html) for detailed information.
 
 ## 3. Bcrypt Package
-- **Description**: Bcrypt is a popular npm package for password hashing in Node.js.
-- **Algorithm**: Bcrypt uses a slow and computationally intensive hashing algorithm, making it resistant to brute-force attacks.
-- **Usage**: You can easily hash passwords using the bcrypt package in your Node.js project. Install it with `npm i bcrypt`.
-- **Security Considerations**: Upgrade to at least version 5.0.0 to avoid security issues related to password truncation and handling of NUL characters. See [npm bcrypt](https://www.npmjs.com/package/bcrypt) for more details.
+- **Overview**: Bcrypt is a password-hashing function designed to securely store passwords. It uses the Blowfish cipher and includes a salt to protect against rainbow table attacks.
 
 ## 4. Logging to Files, Setting Levels, and Formatting
 - **Basics**: Replace `print` statements with logs. Configure logging levels, filenames, and formats using `basicConfig()`.
