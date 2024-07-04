@@ -12,9 +12,9 @@ from mysql.connector.connection import MySQLConnection
 
 # database credentials
 DB_NAME = os.getenv("PERSONAL_DATA_DB_NAME")
-DB_USERNAME = os.getenv("PERSONAL_DATA_DB_USERNAME")
-DB_PASSWORD = os.getenv("PERSONAL_DATA_DB_PASSWORD")
-DB_HOST = os.getenv("PERSONAL_DATA_DB_HOST")
+DB_USERNAME = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+DB_PASSWORD = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+DB_HOST = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
 
 
 PII_FIELDS = (
@@ -69,3 +69,28 @@ def get_db() -> MySQLConnection:
         database=DB_NAME
     )
     return connection
+
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='[HOLBERTON] user_data INFO %(asctime)s: %(message)s')
+
+
+def main():
+    """retrieves and displays users data"""
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+
+    filtered_fields = {'name', 'email', 'phone', 'ssn', 'password'}
+    for row in rows:
+        filtered_data = {key: '***' if key in filtered_fields else value for key, value in row.items()}
+        formatted_data = "; ".join(f"{key}={value}" for key, value in filtered_data.items())
+        logging.info(formatted_data)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
