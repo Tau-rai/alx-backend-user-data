@@ -5,3 +5,4 @@ main.py
 sapi/
 .DS_Store*
 main*
+.db_*
