@@ -7,7 +7,7 @@ Module for session authentication
 from api.v1.auth.auth import Auth
 import uuid
 import os
-from flask import request, flash, jsonify, make_response
+from flask import request
 
 
 class SessionAuth(Auth):
@@ -34,3 +34,16 @@ class SessionAuth(Auth):
         user_id = self.user_id_for_session_id(session_id)
         from models.user import User
         return User.get(user_id)
+
+    def destroy_session(self, request=None):
+        """Deletes the user session"""
+        if request is None:
+            return False
+        session_id = self.session_cookie(request)
+        if not session_id:
+            return False
+        user_id = self.user_id_for_session_id(session_id)
+        if not user_id:
+            return False
+        del self.user_id_by_session_id[session_id]
+        return True
