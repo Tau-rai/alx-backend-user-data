@@ -6,6 +6,8 @@ Module for session authentication
 
 from api.v1.auth.auth import Auth
 import uuid
+import os
+from flask import request
 
 
 class SessionAuth(Auth):
