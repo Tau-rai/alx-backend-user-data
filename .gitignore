@@ -6,3 +6,4 @@ sapi/
 .DS_Store*
 main*
 .db_*
+*.db
