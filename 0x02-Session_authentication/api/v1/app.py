@@ -23,6 +23,9 @@ if AUTH_TYPE == "basic_auth":
 if AUTH_TYPE == "session_auth":
     from api.v1.auth.session_auth import SessionAuth
     auth = SessionAuth()
+if AUTH_TYPE == "session_exp_auth":
+    from api.v1.auth.session_exp_auth import SessionExpAuth
+    auth = SessionExpAuth()
 
 
 @app.errorhandler(404)
@@ -48,7 +51,17 @@ def forbidden(error) -> str:
 
 @app.before_request
 def before_request():
-    """ Before request handler
+    """Before request handler.
+
+    This function is executed before each request to the API. It performs authentication checks
+    to ensure that the request is authorized.
+
+    Returns:
+        None: If the authentication is successful.
+        Tuple: If the authentication fails, it returns a tuple containing None and an HTTP 401 error response.
+
+    Raises:
+        HTTPException: If the authentication fails, it raises an HTTP 401 or 403 error response.
     """
     if auth is None:
         return
@@ -57,7 +70,7 @@ def before_request():
         '/api/v1/unauthorized/',
         '/api/v1/forbidden/',
         '/api/v1/auth_session/login/',
-        ]
+    ]
     if auth.require_auth(request.path, paths):
         if not auth.authorization_header(request):
             return None, abort(401)
