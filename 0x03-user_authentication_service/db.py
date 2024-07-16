@@ -1,5 +1,6 @@
 #!usr/bin/env python3
-"""DB module
+"""
+DB module
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,8 +9,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
 
-from user import Base
-from user import User
+from user import Base, User
 
 
 class DB:
@@ -41,14 +41,25 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs):
-        """Retruns first row from the users table"""
+        """Returns first row from the users table"""
         try:
             user = self.__session.query(User).filter_by(**kwargs).first()
 
             if user is None:
                 raise NoResultFound
             return user
+        except InvalidRequestError as e:
+            raise InvalidRequestError from e
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Updates a user"""
+        try:
+            user = self.find_user_by(id=user_id)
+            for key, value in kwargs.items():
+                if hasattr(user, key):
+                    setattr(user, key, value)
+                else:
+                    raise ValueError(f"Invalid attribute: {key}")
+            self._session.commit()
         except NoResultFound:
-            raise NoResultFound("No user found with the given parameters")
-        except InvalidRequestError:
-            raise InvalidRequestError("Invalid query parameters")
+            raise ValueError(f"No user found with id: {user_id}")
