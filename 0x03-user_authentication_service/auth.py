@@ -8,6 +8,11 @@ from sqlalchemy.exc import NoResultFound
 import uuid
 
 
+def _generate_uuid() -> str:
+    """Generates a UUID"""
+    return str(uuid.uuid4())
+
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -27,20 +32,29 @@ class Auth:
                 raise ValueError(f"User {email} already exists")
         except NoResultFound:
             hashed_password = self._hash_password(password)
-            new_user = self._db.add_user(email, hashed_password.decode('utf-8'))
+            new_user = self._db.add_user(
+                email, hashed_password.decode('utf-8'))
             return new_user
 
     def valid_login(self, email: str, password: str) -> bool:
         """Validates a user's login information"""
-        try:    
+        try:
             user = self._db.find_user_by(email=email)
             if user and bcrypt.checkpw(
-                    password.encode('utf-8'), user.hashed_password.encode('utf-8')):
+                    password.encode('utf-8'),
+                    user.hashed_password.encode('utf-8')):
                 return True
             return False
         except NoResultFound:
             return False
-        
-    def _generate_uuid(self) -> str:
-        """Generates a UUID"""
-        return str(uuid.uuid4())
+
+    def create_session(self, email: str) -> str:
+        """Creates a session ID"""
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+        return session_id
