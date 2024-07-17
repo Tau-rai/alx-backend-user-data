@@ -19,7 +19,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -44,12 +44,11 @@ class DB:
         """Returns first row from the users table"""
         try:
             user = self._session.query(User).filter_by(**kwargs).first()
-            if user is None:
-                raise NoResultFound()
+            if not user:
+                raise NoResultFound("No user found")
             return user
         except InvalidRequestError as e:
-            print(f"InvalidRequestError: {e}")
-            raise
+            raise e
         finally:
             self._session.close()
 
