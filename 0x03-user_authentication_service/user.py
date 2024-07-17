@@ -17,3 +17,10 @@ class User(Base):
     hashed_password = Column(String(250), nullable=False)
     session_id = Column(String(250), nullable=True)
     reset_token = Column(String(250), nullable=True)
+
+    def to_dict(self) -> dict:
+        """Returns a dictionary representation of a User instance"""
+        return {
+            "id": self.id,
+            "email": self.email
+        }

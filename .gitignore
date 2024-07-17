@@ -7,3 +7,4 @@ sapi/
 main*
 .db_*
 *.db
+basic/
