@@ -40,13 +40,13 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         """Returns first row from the users table"""
         try:
-            user = self.__session.query(User).filter_by(**kwargs).first()
+            user = self._session.query(User).filter_by(**kwargs).first()
 
             if user is None:
-                raise NoResultFound
+                raise NoResultFound()
             return user
         except InvalidRequestError as e:
             raise InvalidRequestError from e
@@ -63,3 +63,5 @@ class DB:
             self._session.commit()
         except NoResultFound:
             raise ValueError(f"No user found with id: {user_id}")
+        finally:
+            self._session.close()
